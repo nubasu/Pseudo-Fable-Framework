@@ -1,4 +1,4 @@
-# fable_agent_framework — fable framework installation guide
+# Fable-Agent-Framework — fable framework installation guide
 
 English | [日本語](README.ja.md)
 

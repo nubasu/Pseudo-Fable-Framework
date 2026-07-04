@@ -1,4 +1,4 @@
-# fable_agent_framework — fable フレームワーク導入ガイド
+# Fable-Agent-Framework — fable フレームワーク導入ガイド
 
 [English](README.md) | 日本語
 
