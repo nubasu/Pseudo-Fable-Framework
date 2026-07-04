@@ -38,19 +38,31 @@
 
 ## 導入手順
 
-この repo を任意の場所に clone(または ZIP 展開)し、共通変数を自分の環境に合わせて設定する(以降のスニペットで使用):
+この repo を任意の場所に clone(または ZIP 展開)し、共通変数を自分の環境に合わせて設定する(以降のスニペットで使用)。各シナリオは Windows PowerShell → macOS / Linux(bash)の順でコマンドを併記する。
+
+Windows(PowerShell):
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks"   # ← この repo を置いた場所
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks"   # ← この repo を置いた場所
 $proj    = "C:\path\to\new-project"                        # ← 導入先プロジェクト
 ```
 
-スニペットは Windows PowerShell 用。macOS / Linux では `Copy-Item` → `cp -R`、`Get-Content ... | Add-Content ...` → `cat ... >> ...` に読み替える(パス区切りは `/`)。
+macOS / Linux(bash):
+
+```bash
+storage="/path/to/Fable-Agent-Framework/frameworks"   # ← この repo を置いた場所
+proj="/path/to/new-project"                           # ← 導入先プロジェクト
+```
 
 ### A. Opus 単独(最短)
 
 ```powershell
 Copy-Item "$storage\fable-solo\CLAUDE.template.md" "$proj\CLAUDE.md"
+```
+
+```bash
+# macOS / Linux
+cp "$storage/fable-solo/CLAUDE.template.md" "$proj/CLAUDE.md"
 ```
 
 ### B. 推奨フルスタック(Opus=PL、Sonnet=実装)
@@ -67,6 +79,16 @@ Copy-Item -Recurse -Force "$storage\fable-lift\.claude\skills\*"        "$proj\.
 Copy-Item -Recurse -Force "$storage\fable-orchestrate\.claude\skills\*" "$proj\.claude\skills\"
 ```
 
+```bash
+# macOS / Linux
+cp "$storage/fable-lift/CLAUDE.template.md" "$proj/CLAUDE.md"
+cat "$storage/fable-orchestrate/ORCHESTRATE.template.md" >> "$proj/CLAUDE.md"
+
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/fable-lift/.claude/skills/"*        "$proj/.claude/skills/"
+cp -R "$storage/fable-orchestrate/.claude/skills/"* "$proj/.claude/skills/"
+```
+
 Sonnet ワーカー(Claude サブエージェント)はプロジェクトの CLAUDE.md を継承するため、lift 部分がそのままワーカーの実行規律になる(PL のブリーフ品質 × ワーカーの実行規律の掛け算)。
 
 ### C. 仕様起点の上流を足す(B に追加)
@@ -77,10 +99,21 @@ Get-Content "$storage\fable-blueprint\BLUEPRINT.template.md" -Encoding utf8 |
 Copy-Item -Recurse -Force "$storage\fable-blueprint\.claude\skills\*" "$proj\.claude\skills\"
 ```
 
+```bash
+# macOS / Linux
+cat "$storage/fable-blueprint/BLUEPRINT.template.md" >> "$proj/CLAUDE.md"
+cp -R "$storage/fable-blueprint/.claude/skills/"* "$proj/.claude/skills/"
+```
+
 ### D. Codex ワーカーを足す(B/C に追加)
 
 ```powershell
 Copy-Item "$storage\fable-orchestrate\AGENTS.template.md" "$proj\AGENTS.md"
+```
+
+```bash
+# macOS / Linux
+cp "$storage/fable-orchestrate/AGENTS.template.md" "$proj/AGENTS.md"
 ```
 
 - 非対話実行の CLI 形式(`codex exec` 等)をローカルの `codex --help` で確認する。
@@ -90,6 +123,11 @@ Copy-Item "$storage\fable-orchestrate\AGENTS.template.md" "$proj\AGENTS.md"
 
 ```powershell
 Copy-Item "$storage\fable-team\AGENTS.template.md" "$proj\AGENTS.md"
+```
+
+```bash
+# macOS / Linux
+cp "$storage/fable-team/AGENTS.template.md" "$proj/AGENTS.md"
 ```
 
 - Claude 側の橋渡し: プロジェクトの CLAUDE.md 冒頭付近に `@AGENTS.md` の1行を追加する(お使いの Claude Code が AGENTS.md をネイティブに読む場合は不要 — 実挙動を確認)。
@@ -103,6 +141,13 @@ New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\fable-retro\.claude\skills\*" "$proj\.claude\skills\"
 ```
 
+```bash
+# macOS / Linux
+cat "$storage/fable-retro/RETRO.template.md" >> "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/fable-retro/.claude/skills/"* "$proj/.claude/skills/"
+```
+
 - セッション跨ぎの復元(session-bootstrap)とルール育成(retro)。マルチセッションの実務では最初から入れておくことを推奨。
 - E(fable-team 1枚)構成でも、`@AGENTS.md` の橋渡し行を書いた CLAUDE.md に追記すれば併用できる。
 
@@ -113,6 +158,13 @@ Get-Content "$storage\fable-incident\INCIDENT.template.md" -Encoding utf8 |
   Add-Content "$proj\CLAUDE.md" -Encoding utf8
 New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\fable-incident\.claude\skills\*" "$proj\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+cat "$storage/fable-incident/INCIDENT.template.md" >> "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/fable-incident/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 - 本番影響が出た瞬間の実況プロトコル(止血→診断の順序厳守・証拠保全・タイムライン)と、解決後の blameless ポストモーテム。診断は lift の root-cause-debug、教訓の配置は retro に接続する(未導入でも単体で動く)。

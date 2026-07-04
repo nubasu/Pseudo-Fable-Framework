@@ -52,7 +52,7 @@ Design highlights:
 For combined installs with other frameworks (the recommended full stack, etc.), see the README.md at the repo root.
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-orchestrate"   # ← adjust to where you put this repo
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-orchestrate"   # ← adjust to where you put this repo
 $proj    = "C:\path\to\project"
 
 # 1. Copy the skills (added under .claude/skills/)
@@ -64,6 +64,17 @@ Get-Content "$storage\ORCHESTRATE.template.md" -Encoding utf8 | Add-Content "$pr
 
 # 3. Only if using Codex: place the external-agent rules
 Copy-Item "$storage\AGENTS.template.md" "$proj\AGENTS.md"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-orchestrate"   # ← adjust to where you put this repo
+proj="/path/to/project"
+
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
+cat "$storage/ORCHESTRATE.template.md" >> "$proj/CLAUDE.md"
+cp "$storage/AGENTS.template.md" "$proj/AGENTS.md"   # only if using Codex
 ```
 
 Afterwards, sync the Project specifics at the end of AGENTS.md with the CLAUDE.md side (external agents need the build/test commands too).

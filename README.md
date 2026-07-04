@@ -38,19 +38,31 @@ Recipes for installing the fable family — a set of context frameworks for agen
 
 ## Installation
 
-Clone this repo anywhere (or unzip a download), then set the shared variables to match your environment (used by every snippet below):
+Clone this repo anywhere (or unzip a download), then set the shared variables to match your environment (used by every snippet below). Each scenario shows the Windows PowerShell commands first, then the macOS / Linux (bash) equivalent.
+
+Windows (PowerShell):
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks"   # ← where you put this repo
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks"   # ← where you put this repo
 $proj    = "C:\path\to\new-project"                        # ← the target project
 ```
 
-The snippets are for Windows PowerShell. On macOS / Linux, read `Copy-Item` as `cp -R` and `Get-Content ... | Add-Content ...` as `cat ... >> ...` (with `/` as the path separator).
+macOS / Linux (bash):
+
+```bash
+storage="/path/to/Fable-Agent-Framework/frameworks"   # ← where you put this repo
+proj="/path/to/new-project"                           # ← the target project
+```
 
 ### A. Solo Opus (shortest path)
 
 ```powershell
 Copy-Item "$storage\fable-solo\CLAUDE.template.md" "$proj\CLAUDE.md"
+```
+
+```bash
+# macOS / Linux
+cp "$storage/fable-solo/CLAUDE.template.md" "$proj/CLAUDE.md"
 ```
 
 ### B. Recommended full stack (Opus = PL, Sonnet = implementation)
@@ -67,6 +79,16 @@ Copy-Item -Recurse -Force "$storage\fable-lift\.claude\skills\*"        "$proj\.
 Copy-Item -Recurse -Force "$storage\fable-orchestrate\.claude\skills\*" "$proj\.claude\skills\"
 ```
 
+```bash
+# macOS / Linux
+cp "$storage/fable-lift/CLAUDE.template.md" "$proj/CLAUDE.md"
+cat "$storage/fable-orchestrate/ORCHESTRATE.template.md" >> "$proj/CLAUDE.md"
+
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/fable-lift/.claude/skills/"*        "$proj/.claude/skills/"
+cp -R "$storage/fable-orchestrate/.claude/skills/"* "$proj/.claude/skills/"
+```
+
 Sonnet workers (Claude subagents) inherit the project's CLAUDE.md, so the lift part becomes the workers' execution discipline as-is (PL brief quality multiplied by worker execution discipline).
 
 ### C. Add spec-driven upstream work (on top of B)
@@ -77,10 +99,21 @@ Get-Content "$storage\fable-blueprint\BLUEPRINT.template.md" -Encoding utf8 |
 Copy-Item -Recurse -Force "$storage\fable-blueprint\.claude\skills\*" "$proj\.claude\skills\"
 ```
 
+```bash
+# macOS / Linux
+cat "$storage/fable-blueprint/BLUEPRINT.template.md" >> "$proj/CLAUDE.md"
+cp -R "$storage/fable-blueprint/.claude/skills/"* "$proj/.claude/skills/"
+```
+
 ### D. Add Codex workers (on top of B/C)
 
 ```powershell
 Copy-Item "$storage\fable-orchestrate\AGENTS.template.md" "$proj\AGENTS.md"
+```
+
+```bash
+# macOS / Linux
+cp "$storage/fable-orchestrate/AGENTS.template.md" "$proj/AGENTS.md"
 ```
 
 - Check the non-interactive CLI form (`codex exec`, etc.) with your local `codex --help`.
@@ -90,6 +123,11 @@ Copy-Item "$storage\fable-orchestrate\AGENTS.template.md" "$proj\AGENTS.md"
 
 ```powershell
 Copy-Item "$storage\fable-team\AGENTS.template.md" "$proj\AGENTS.md"
+```
+
+```bash
+# macOS / Linux
+cp "$storage/fable-team/AGENTS.template.md" "$proj/AGENTS.md"
 ```
 
 - Claude-side bridge: add a single `@AGENTS.md` line near the top of the project's CLAUDE.md (unnecessary if your Claude Code reads AGENTS.md natively — verify the actual behavior).
@@ -103,6 +141,13 @@ New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\fable-retro\.claude\skills\*" "$proj\.claude\skills\"
 ```
 
+```bash
+# macOS / Linux
+cat "$storage/fable-retro/RETRO.template.md" >> "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/fable-retro/.claude/skills/"* "$proj/.claude/skills/"
+```
+
 - Cross-session restore (session-bootstrap) and rule cultivation (retro). Recommended from day one for real multi-session work.
 - Works with scenario E (single fable-team file) too: append it to the CLAUDE.md that carries the `@AGENTS.md` bridge line.
 
@@ -113,6 +158,13 @@ Get-Content "$storage\fable-incident\INCIDENT.template.md" -Encoding utf8 |
   Add-Content "$proj\CLAUDE.md" -Encoding utf8
 New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\fable-incident\.claude\skills\*" "$proj\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+cat "$storage/fable-incident/INCIDENT.template.md" >> "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/fable-incident/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 - A live protocol for the moment production impact appears (strict mitigate-before-diagnose ordering, evidence preservation, timeline) and a blameless postmortem after resolution. Diagnosis plugs into lift's root-cause-debug and lesson placement into retro (works standalone without them).

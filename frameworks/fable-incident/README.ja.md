@@ -54,7 +54,7 @@ fable-incident/
 ## 導入手順
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-incident"   # ← この repo を置いた場所に合わせる
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-incident"   # ← この repo を置いた場所に合わせる
 $proj    = "C:\path\to\project"
 
 # 1. 常駐コアを CLAUDE.md 末尾に追記
@@ -63,6 +63,16 @@ Get-Content "$storage\INCIDENT.template.md" -Encoding utf8 | Add-Content "$proj\
 # 2. skills をコピー(.claude/skills/ に追加される)
 New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\.claude\skills\*" "$proj\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-incident"   # ← この repo を置いた場所に合わせる
+proj="/path/to/project"
+
+cat "$storage/INCIDENT.template.md" >> "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 他フレームワークとの組み合わせ導入は、ストア直下の README.ja.md を参照。

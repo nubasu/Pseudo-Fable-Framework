@@ -54,7 +54,7 @@ fable-blueprint/
 他フレームワークとの組み合わせ導入(推奨フルスタック等)は、ストア直下の README.ja.md を参照。
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-blueprint"   # ← この repo を置いた場所に合わせる
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-blueprint"   # ← この repo を置いた場所に合わせる
 $proj    = "C:\path\to\project"
 
 # 1. skills をコピー(.claude/skills/ に追加される)
@@ -63,6 +63,16 @@ Copy-Item -Recurse -Force "$storage\.claude\skills\*" "$proj\.claude\skills\"
 
 # 2. 常駐コアを CLAUDE.md 末尾に追記
 Get-Content "$storage\BLUEPRINT.template.md" -Encoding utf8 | Add-Content "$proj\CLAUDE.md" -Encoding utf8
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-blueprint"   # ← この repo を置いた場所に合わせる
+proj="/path/to/project"
+
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
+cat "$storage/BLUEPRINT.template.md" >> "$proj/CLAUDE.md"
 ```
 
 GitHub Issues 等の外部トラッカーへの起票は任意(外部可視のためユーザー確認必須、ファイルが正)。

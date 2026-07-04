@@ -54,7 +54,7 @@ Design highlights:
 For combined installs with other frameworks (the recommended full stack, etc.), see the README.md at the repo root.
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-blueprint"   # ← adjust to where you put this repo
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-blueprint"   # ← adjust to where you put this repo
 $proj    = "C:\path\to\project"
 
 # 1. Copy the skills (added under .claude/skills/)
@@ -63,6 +63,16 @@ Copy-Item -Recurse -Force "$storage\.claude\skills\*" "$proj\.claude\skills\"
 
 # 2. Append the resident core to the end of CLAUDE.md
 Get-Content "$storage\BLUEPRINT.template.md" -Encoding utf8 | Add-Content "$proj\CLAUDE.md" -Encoding utf8
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-blueprint"   # ← adjust to where you put this repo
+proj="/path/to/project"
+
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
+cat "$storage/BLUEPRINT.template.md" >> "$proj/CLAUDE.md"
 ```
 
 Filing to an external tracker such as GitHub Issues is optional (externally visible, so user confirmation is required; the files remain the source of truth).

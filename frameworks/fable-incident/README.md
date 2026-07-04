@@ -54,7 +54,7 @@ Works standalone without them (diagnosis falls back to the essentials inside the
 ## Installation
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-incident"   # ← adjust to where you put this repo
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-incident"   # ← adjust to where you put this repo
 $proj    = "C:\path\to\project"
 
 # 1. Append the resident core to the end of CLAUDE.md
@@ -63,6 +63,16 @@ Get-Content "$storage\INCIDENT.template.md" -Encoding utf8 | Add-Content "$proj\
 # 2. Copy the skills (added under .claude/skills/)
 New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\.claude\skills\*" "$proj\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-incident"   # ← adjust to where you put this repo
+proj="/path/to/project"
+
+cat "$storage/INCIDENT.template.md" >> "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 For combined installs with other frameworks, see the README.md at the repo root.

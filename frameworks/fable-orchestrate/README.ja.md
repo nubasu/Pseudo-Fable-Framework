@@ -52,7 +52,7 @@ fable-orchestrate/
 他フレームワークとの組み合わせ導入(推奨フルスタック等)は、ストア直下の README.ja.md を参照。
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-orchestrate"   # ← この repo を置いた場所に合わせる
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-orchestrate"   # ← この repo を置いた場所に合わせる
 $proj    = "C:\path\to\project"
 
 # 1. skills をコピー(.claude/skills/ に追加される)
@@ -64,6 +64,17 @@ Get-Content "$storage\ORCHESTRATE.template.md" -Encoding utf8 | Add-Content "$pr
 
 # 3. Codex を使う場合のみ:外部エージェント向けルールを配置
 Copy-Item "$storage\AGENTS.template.md" "$proj\AGENTS.md"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-orchestrate"   # ← この repo を置いた場所に合わせる
+proj="/path/to/project"
+
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
+cat "$storage/ORCHESTRATE.template.md" >> "$proj/CLAUDE.md"
+cp "$storage/AGENTS.template.md" "$proj/AGENTS.md"   # Codex を使う場合のみ
 ```
 
 その後、AGENTS.md 末尾の Project specifics を CLAUDE.md 側と同期させる(ビルド・テストコマンドは外部エージェントにも必要)。

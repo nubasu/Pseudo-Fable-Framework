@@ -41,10 +41,18 @@ Skeleton of the contents: 5 non-negotiables (the family-wide constants) → How 
 ## Installation
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-solo"   # ← adjust to where you put this repo
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-solo"   # ← adjust to where you put this repo
 $proj    = "C:\path\to\project"
 
 Copy-Item "$storage\CLAUDE.template.md" "$proj\CLAUDE.md"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-solo"   # ← adjust to where you put this repo
+proj="/path/to/project"
+
+cp "$storage/CLAUDE.template.md" "$proj/CLAUDE.md"
 ```
 
 Then run `/init` in the new project and merge the output into **Project specifics** at the end (keep the framework part).

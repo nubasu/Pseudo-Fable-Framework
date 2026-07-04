@@ -45,12 +45,22 @@ fable-lift/
 他フレームワークとの組み合わせ導入(推奨フルスタック等)は、ストア直下の README.ja.md を参照。
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-lift"   # ← この repo を置いた場所に合わせる
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-lift"   # ← この repo を置いた場所に合わせる
 $proj    = "C:\path\to\new-project"
 
 Copy-Item "$storage\CLAUDE.template.md" "$proj\CLAUDE.md"
 New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\.claude\skills\*" "$proj\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-lift"   # ← この repo を置いた場所に合わせる
+proj="/path/to/new-project"
+
+cp "$storage/CLAUDE.template.md" "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 その後、新プロジェクトで:

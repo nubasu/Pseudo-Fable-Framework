@@ -45,12 +45,22 @@ fable-lift/
 For combined installs with other frameworks (the recommended full stack, etc.), see the README.md at the repo root.
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-lift"   # ← adjust to where you put this repo
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-lift"   # ← adjust to where you put this repo
 $proj    = "C:\path\to\new-project"
 
 Copy-Item "$storage\CLAUDE.template.md" "$proj\CLAUDE.md"
 New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\.claude\skills\*" "$proj\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-lift"   # ← adjust to where you put this repo
+proj="/path/to/new-project"
+
+cp "$storage/CLAUDE.template.md" "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 Then, in the new project:

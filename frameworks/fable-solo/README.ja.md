@@ -41,10 +41,18 @@ fable-solo/
 ## 導入手順
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-solo"   # ← この repo を置いた場所に合わせる
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-solo"   # ← この repo を置いた場所に合わせる
 $proj    = "C:\path\to\project"
 
 Copy-Item "$storage\CLAUDE.template.md" "$proj\CLAUDE.md"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-solo"   # ← この repo を置いた場所に合わせる
+proj="/path/to/project"
+
+cp "$storage/CLAUDE.template.md" "$proj/CLAUDE.md"
 ```
 
 その後、新プロジェクトで `/init` を実行し、生成物を末尾 **Project specifics** にマージ(フレームワーク部分は残す)。

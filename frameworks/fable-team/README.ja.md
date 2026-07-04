@@ -39,10 +39,18 @@ fable ファミリー3部作(blueprint / orchestrate / lift)の蒸留版を、**
 ## 導入手順
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-team"   # ← この repo を置いた場所に合わせる
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-team"   # ← この repo を置いた場所に合わせる
 $proj    = "C:\path\to\project"
 
 Copy-Item "$storage\AGENTS.template.md" "$proj\AGENTS.md"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-team"   # ← この repo を置いた場所に合わせる
+proj="/path/to/project"
+
+cp "$storage/AGENTS.template.md" "$proj/AGENTS.md"
 ```
 
 その後:

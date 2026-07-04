@@ -49,7 +49,7 @@ Works even in setups without state files or a ledger (restore from git log and d
 ## Installation
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-retro"   # ← adjust to where you put this repo
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-retro"   # ← adjust to where you put this repo
 $proj    = "C:\path\to\project"
 
 # 1. Append the resident triggers to the end of CLAUDE.md
@@ -58,6 +58,16 @@ Get-Content "$storage\RETRO.template.md" -Encoding utf8 | Add-Content "$proj\CLA
 # 2. Copy the skills (added under .claude/skills/)
 New-Item -ItemType Directory -Force "$proj\.claude\skills" | Out-Null
 Copy-Item -Recurse -Force "$storage\.claude\skills\*" "$proj\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-retro"   # ← adjust to where you put this repo
+proj="/path/to/project"
+
+cat "$storage/RETRO.template.md" >> "$proj/CLAUDE.md"
+mkdir -p "$proj/.claude/skills"
+cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 For combined installs with other frameworks, see the README.md at the repo root.

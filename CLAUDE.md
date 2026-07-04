@@ -25,11 +25,11 @@ Examples of what lives here:
 
 Family pipeline: spec → fable-blueprint (design, plan, tickets) → fable-orchestrate (delegation, acceptance) → fable-lift (execution discipline). The one-sheet options are fable-team (mixed-team distillation) and fable-solo (solo Opus, full depth). fable-retro (session restore & rule cultivation) and fable-incident (incident response) can be added to any configuration.
 
-Installation for new projects (choosing a configuration, exclusivity rules, PowerShell commands, common finishing steps) is covered in the README.md at the repo root.
+Installation for new projects (choosing a configuration, exclusivity rules, PowerShell/bash commands, common finishing steps) is covered in the README.md at the repo root.
 
 ## Working notes
 
 - Not a code project: there are no build, lint, or test commands.
 - Files here are templates meant to be copied into new projects. Do not write project-specific content into them (absolute paths, hard-coded project names, etc.).
-- This repository is published on GitHub. Do not write personal-environment information (absolute paths containing usernames, email addresses, etc.) into any file. Use `C:\path\to\...`-style placeholders for paths in instructions.
+- This repository is published on GitHub. Do not write personal-environment information (absolute paths containing usernames, email addresses, etc.) into any file. Use placeholder paths in instructions (`C:\path\to\...` on Windows, `/path/to/...` on macOS/Linux).
 - READMEs are bilingual: `README.md` (English) is the primary, and each has a Japanese mirror `README.ja.md`. When changing one, update the other to match.

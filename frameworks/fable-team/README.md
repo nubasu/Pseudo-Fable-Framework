@@ -39,10 +39,18 @@ The header also prescribes the reading order — everyone reads §1–2 → your
 ## Installation
 
 ```powershell
-$storage = "C:\path\to\fable_agent_framework\frameworks\fable-team"   # ← adjust to where you put this repo
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-team"   # ← adjust to where you put this repo
 $proj    = "C:\path\to\project"
 
 Copy-Item "$storage\AGENTS.template.md" "$proj\AGENTS.md"
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-team"   # ← adjust to where you put this repo
+proj="/path/to/project"
+
+cp "$storage/AGENTS.template.md" "$proj/AGENTS.md"
 ```
 
 Then:
