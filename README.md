@@ -15,7 +15,7 @@ Recipes for installing the fable family — a set of context frameworks for agen
 | `fable-team` | Distilled single file for a mixed PL + worker team (built-in role dispatch) | Single AGENTS.md |
 | `fable-retro` | Ongoing operations: cross-session restore (session-bootstrap) + rule cultivation (retro) | CLAUDE.md append + 2 skills |
 | `fable-incident` | Incident response: mitigate-first live protocol (incident-response) + blameless postmortem (postmortem) | CLAUDE.md append + 2 skills |
-| `fable-harness` | Mechanical guardrails via hooks: finish-gate stop-block, accept-work nudge, state auto-injection | hook scripts (.sh/.ps1) + settings hooks block + CLAUDE.md append |
+| `fable-harness` | Mechanical guardrails via hooks: finish-gate stop-block, accept-work nudge, state auto-injection, opt-in strict verify | hook scripts (.sh/.ps1) + settings hooks block + CLAUDE.md append |
 
 ## Pick a configuration first
 
@@ -191,7 +191,8 @@ else cp "$storage/fable-harness/settings.hooks.json" "$proj/.claude/settings.jso
 cat "$storage/fable-harness/HARNESS.template.md" >> "$proj/CLAUDE.md"
 ```
 
-- Three hooks turn the family's text discipline into mechanical guardrails: a Stop hook that blocks "done" without a finish-gate marker, an acceptance nudge after every subagent return, and automatic `.claude/state/` injection at session start. Restart the session, then verify with `/hooks`.
+- Three always-on hooks turn the family's text discipline into mechanical guardrails: a Stop hook that blocks "done" without a finish-gate marker, an acceptance nudge after every subagent return, and automatic `.claude/state/` injection at session start. Restart the session, then verify with `/hooks`.
+- Optional strict mode: set `FABLE_HARNESS_VERIFY_CMD` (e.g. in the settings `env` block) and the Stop hook also runs your real check command after edits, blocking completion while it fails. `FABLE_HARNESS_DISABLE=stop,accept,session,verify|all` silences individual hooks.
 - On Windows the default (bash) settings are correct whenever Git Bash is installed; use `settings.hooks.powershell.json` otherwise. Details and honest limits: the fable-harness README.
 
 ## Common finishing steps (all scenarios)

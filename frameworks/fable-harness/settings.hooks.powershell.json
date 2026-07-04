@@ -8,6 +8,12 @@
             "shell": "powershell",
             "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\stop-finish-gate.ps1\"",
             "timeout": 30
+          },
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\stop-verify.ps1\"",
+            "timeout": 300
           }
         ]
       }

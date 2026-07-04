@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# fable-harness v1.0 (2026-07-04) -- Stop hook: block completion without a finish-gate marker.
+# fable-harness v1.1 (2026-07-04) -- Stop hook: block completion without a finish-gate marker.
+# v1.1: FABLE_HARNESS_DISABLE kill switch (keys: stop, all).
 # Blocks the stop (exit 2) when this session modified files (Write/Edit/MultiEdit/NotebookEdit)
 # and no `[finish-gate: pass]` / `[finish-gate: n/a]` marker was printed after the last edit.
 # Loop safety: honors stop_hook_active when present, and independently gives up after this
@@ -7,6 +8,10 @@
 # No dependencies beyond POSIX awk/sed. Kept ASCII-only in step with the .ps1 twin.
 
 input=$(cat) || exit 0
+
+case ",$(printf '%s' "${FABLE_HARNESS_DISABLE:-}" | tr -d ' ')," in
+  *,stop,*|*,all,*) exit 0 ;;
+esac
 
 case "$input" in
   *'"stop_hook_active":true'*) exit 0 ;;

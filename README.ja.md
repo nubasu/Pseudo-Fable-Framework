@@ -15,7 +15,7 @@
 | `fable-team` | PL+ワーカー混成チームの蒸留1枚版(ロール・ディスパッチ内蔵) | AGENTS.md 1枚 |
 | `fable-retro` | 継続運用: セッション跨ぎの復元(session-bootstrap)+ルール育成(retro) | CLAUDE.md 追記 + skills 2種 |
 | `fable-incident` | 障害対応: 止血優先の実況プロトコル(incident-response)+ blameless ポストモーテム(postmortem) | CLAUDE.md 追記 + skills 2種 |
-| `fable-harness` | hooks による機械的ガードレール: finish-gate 停止ブロック・accept-work ナッジ・state 自動注入 | フックスクリプト(.sh/.ps1)+ settings hooks ブロック + CLAUDE.md 追記 |
+| `fable-harness` | hooks による機械的ガードレール: finish-gate 停止ブロック・accept-work ナッジ・state 自動注入・任意の strict verify | フックスクリプト(.sh/.ps1)+ settings hooks ブロック + CLAUDE.md 追記 |
 
 ## まず構成を選ぶ
 
@@ -191,7 +191,8 @@ else cp "$storage/fable-harness/settings.hooks.json" "$proj/.claude/settings.jso
 cat "$storage/fable-harness/HARNESS.template.md" >> "$proj/CLAUDE.md"
 ```
 
-- 3 本のフックがテキスト規律を機械的ガードレールに変える: finish-gate マーカーなしの「done」を弾く Stop フック、サブエージェントが戻るたびの検収ナッジ、セッション開始時の `.claude/state/` 自動注入。導入後はセッションを再起動し、`/hooks` で登録を確認する。
+- 常時稼働の 3 本がテキスト規律を機械的ガードレールに変える: finish-gate マーカーなしの「done」を弾く Stop フック、サブエージェントが戻るたびの検収ナッジ、セッション開始時の `.claude/state/` 自動注入。導入後はセッションを再起動し、`/hooks` で登録を確認する。
+- 任意の strict モード: `FABLE_HARNESS_VERIFY_CMD` を settings の `env` に設定すると、編集後の Stop 時に実チェックコマンドを実行し、失敗の間は完了をブロックする。`FABLE_HARNESS_DISABLE=stop,accept,session,verify|all` で個別フックを無効化できる。
 - Windows では Git Bash があれば既定(bash)設定のままで正しい。無い環境のみ `settings.hooks.powershell.json` を使う。詳細と正直な限界は fable-harness の README を参照。
 
 ## 共通仕上げ(全シナリオ)

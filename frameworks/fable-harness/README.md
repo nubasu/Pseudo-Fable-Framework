@@ -2,7 +2,7 @@
 
 English | [日本語](README.ja.md)
 
-The enforcement module — every fable framework README admits the same limit: "text discipline is strong steering, not enforcement". This module adds the missing mechanical layer: three Claude Code hooks guarding the three places where steering leaks the most. Adds to any framework configuration. Resident cost ~0.25K tokens (the CLAUDE.md addendum); the hook scripts themselves live outside the context window.
+The enforcement module — every fable framework README admits the same limit: "text discipline is strong steering, not enforcement". This module adds the missing mechanical layer: three always-on Claude Code hooks guarding the places where steering leaks the most, plus an opt-in **strict-verify** hook that runs your project's real checks at the finish line. Adds to any framework configuration. Resident cost ~0.25K tokens (the CLAUDE.md addendum); the hook scripts themselves live outside the context window.
 
 ## The idea — from steering to guardrails
 
@@ -27,19 +27,35 @@ fable-harness/
 ├── settings.hooks.powershell.json   ← alternative for Windows WITHOUT Git Bash
 └── .claude/hooks/                   ← hook scripts (each as .sh + .ps1 twin; ASCII-only; zero dependencies)
     ├── stop-finish-gate.(sh|ps1)        ← Stop: block "done" that has no finish-gate marker
+    ├── stop-verify.(sh|ps1)             ← Stop, opt-in strict mode: run the real check command, block on failure
     ├── posttool-accept-work.(sh|ps1)    ← PostToolUse (Task|Agent): acceptance nudge
     └── sessionstart-bootstrap.(sh|ps1)  ← SessionStart: inject .claude/state/ into context
 ```
 
-## The three hooks
+## The hooks
 
 | Hook | Fires on | Behavior | Enforces |
 |---|---|---|---|
 | `stop-finish-gate` | Stop (end of turn) | If the session modified files (Write/Edit/MultiEdit/NotebookEdit) and no `[finish-gate: pass]` / `[finish-gate: n/a]` marker follows the last edit → exit 2 blocks the stop and feeds the gate instruction back to the model | lift `finish-gate` / solo §P3 |
+| `stop-verify` (opt-in) | Stop (end of turn) | Inert unless `FABLE_HARNESS_VERIFY_CMD` is set. When the session has edits newer than its last successful pass, runs the command from the project root; on failure → exit 2 blocks the stop with the output tail | finish-gate Gate B — the *truth*, not just the ritual |
 | `posttool-accept-work` | PostToolUse, matcher `Task\|Agent` | Injects a one-line acceptance nudge after each subagent result (non-blocking) | orchestrate `accept-work` |
-| `sessionstart-bootstrap` | SessionStart (startup / resume / clear / compact) | If `.claude/state/` has files: lists them and inlines the newest one (60 lines / 4KB cap) into context; silent when empty | retro `session-bootstrap` OPEN / lift `long-task-state` |
+| `sessionstart-bootstrap` | SessionStart (startup / resume / clear / compact) | If `.claude/state/` has files: lists them and inlines the newest one (60 lines / 4KB cap) into context; warns when the newest file is >60 min old (likely stale); silent when empty | retro `session-bootstrap` OPEN / lift `long-task-state` |
 
-Loop safety on the Stop hook: it honors `stop_hook_active` when present, and independently stops insisting once it has already blocked twice since the last edit — worst case is two nudges, never an infinite loop.
+Loop safety on the blocking hooks: they honor `stop_hook_active` when present, and independently stop insisting once they have already blocked twice since the last edit — worst case is two nudges each, never an infinite loop. `stop-verify` additionally skips entirely when nothing changed since its last successful run (per-session stamp in the OS temp dir).
+
+## Strict mode and runtime switches
+
+**Strict verify (opt-in).** Set `FABLE_HARNESS_VERIFY_CMD` to your project's real check command — the cleanest place is the `env` block of `.claude/settings.json`:
+
+```json
+{
+  "env": { "FABLE_HARNESS_VERIFY_CMD": "npm run typecheck && npm test -- --bail" }
+}
+```
+
+After edits, the Stop hook runs the command (bash variant via `sh -c`, PowerShell variant via `Invoke-Expression`, both from the project root, 300s timeout in the shipped settings) and blocks completion while it fails, feeding back the last 1500 characters of output. This mechanically closes the harness's own biggest limit — "ritual, not truth" — for Gate B: a marker can be faked, a failing typecheck cannot.
+
+**Kill switch.** `FABLE_HARNESS_DISABLE` silences hooks without editing settings.json — a comma-separated list of `stop`, `accept`, `session`, `verify`, or `all` (e.g. `FABLE_HARNESS_DISABLE=accept,verify`).
 
 ## Installation
 
@@ -73,7 +89,7 @@ else cp "$storage/settings.hooks.json" "$proj/.claude/settings.json"; fi
 cat "$storage/HARNESS.template.md" >> "$proj/CLAUDE.md"
 ```
 
-Afterwards: **restart the session** (hook registration loads at startup) and run `/hooks` to confirm the three hooks are listed. Smoke test: make a trivial file edit and let the turn end without a completion report — the stop should bounce exactly once with the gate instruction.
+Afterwards: **restart the session** (hook registration loads at startup) and run `/hooks` to confirm the four harness hooks are listed (`stop-verify` stays inert until `FABLE_HARNESS_VERIFY_CMD` is configured). Smoke test: make a trivial file edit and let the turn end without a completion report — the stop should bounce exactly once with the gate instruction.
 
 ## Design notes
 
@@ -89,6 +105,8 @@ Afterwards: **restart the session** (hook registration loads at startup) and run
 - The marker counts anywhere in an assistant entry — a model *quoting* it (including inside extended thinking) satisfies the check without a real report.
 - `stop_hook_active` is absent from the current hooks documentation; the built-in two-block limit is the load-bearing loop protection.
 - Hooks merge across settings levels (user + project both run), and registration changes need a session restart.
+- Strict verify executes an arbitrary command with your shell privileges — treat `FABLE_HARNESS_VERIFY_CMD` like any build script and review it before enabling. The PowerShell variant runs it via `Invoke-Expression`; prefer plain native commands there.
+- The two Stop hooks run independently; when both block, both messages arrive and their order is not guaranteed.
 
 ## Growing it
 

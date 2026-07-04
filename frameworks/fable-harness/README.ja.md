@@ -2,7 +2,7 @@
 
 [English](README.md) | 日本語
 
-強制モジュール — fable の各 README は共通して「テキスト規律は強制力ではなく強い誘導」という限界を認めてきた。本モジュールはその欠けていた機械層を足す: 誘導が最も漏れやすい 3 箇所を守る Claude Code hooks 3 本。どのフレームワーク構成にも追加できる。常駐コストは約 0.25K トークン(CLAUDE.md 追記分)で、フックスクリプト自体はコンテキスト外で動く。
+強制モジュール — fable の各 README は共通して「テキスト規律は強制力ではなく強い誘導」という限界を認めてきた。本モジュールはその欠けていた機械層を足す: 誘導が最も漏れやすい箇所を守る常時稼働の Claude Code hooks 3 本+ゴール直前にプロジェクトの実チェックを回すオプトインの **strict-verify** フック。どのフレームワーク構成にも追加できる。常駐コストは約 0.25K トークン(CLAUDE.md 追記分)で、フックスクリプト自体はコンテキスト外で動く。
 
 ## 発想 — 誘導からガードレールへ
 
@@ -27,19 +27,35 @@ fable-harness/
 ├── settings.hooks.powershell.json   ← Git Bash が無い Windows 向けの代替
 └── .claude/hooks/                   ← フックスクリプト(各 .sh + .ps1 の対、ASCII のみ、依存ゼロ)
     ├── stop-finish-gate.(sh|ps1)        ← Stop: マーカーなしの「done」をブロック
+    ├── stop-verify.(sh|ps1)             ← Stop、オプトイン strict モード: 実チェックを実行し失敗ならブロック
     ├── posttool-accept-work.(sh|ps1)    ← PostToolUse (Task|Agent): 検収ナッジ
     └── sessionstart-bootstrap.(sh|ps1)  ← SessionStart: .claude/state/ をコンテキスト注入
 ```
 
-## 3 本のフック
+## フック一覧
 
 | フック | 発火 | 挙動 | 強制対象 |
 |---|---|---|---|
 | `stop-finish-gate` | Stop(ターン終了) | セッションがファイルを変更(Write/Edit/MultiEdit/NotebookEdit)し、最後の編集の後に `[finish-gate: pass]` / `[finish-gate: n/a]` マーカーが無い → exit 2 で停止をブロックし、ゲート実行の指示をモデルに返す | lift `finish-gate` / solo §P3 |
+| `stop-verify`(オプトイン) | Stop(ターン終了) | `FABLE_HARNESS_VERIFY_CMD` 未設定なら何もしない。前回成功以降に編集があれば、プロジェクトルートでコマンドを実行し、失敗 → exit 2 で出力末尾つきで停止をブロック | finish-gate Gate B — 儀式ではなく*真実* |
 | `posttool-accept-work` | PostToolUse、matcher `Task\|Agent` | サブエージェントの結果ごとに 1 行の検収ナッジを注入(非ブロック) | orchestrate `accept-work` |
-| `sessionstart-bootstrap` | SessionStart(startup / resume / clear / compact) | `.claude/state/` にファイルがあれば一覧+最新 1 件の先頭(60 行 / 4KB 上限)をコンテキストへ注入。無ければ無音 | retro `session-bootstrap` OPEN / lift `long-task-state` |
+| `sessionstart-bootstrap` | SessionStart(startup / resume / clear / compact) | `.claude/state/` にファイルがあれば一覧+最新 1 件の先頭(60 行 / 4KB 上限)をコンテキストへ注入。最新ファイルが 60 分より古ければ stale 警告を付す。無ければ無音 | retro `session-bootstrap` OPEN / lift `long-task-state` |
 
-Stop フックのループ安全性: `stop_hook_active` があれば従い、それとは独立に「最後の編集以降すでに 2 回ブロック済みなら諦めて通す」を自前で持つ — 最悪でもナッジ 2 回、無限ループにはならない。
+ブロック系フックのループ安全性: `stop_hook_active` があれば従い、それとは独立に「最後の編集以降すでに 2 回ブロック済みなら諦めて通す」を自前で持つ — 最悪でも各 2 回、無限ループにはならない。`stop-verify` はさらに「前回成功以降に変更がなければ実行しない」(セッション別スタンプを OS の temp に保存)。
+
+## strict モードとランタイムスイッチ
+
+**strict verify(オプトイン)。** `FABLE_HARNESS_VERIFY_CMD` にプロジェクトの実チェックコマンドを設定する。置き場所は `.claude/settings.json` の `env` ブロックが最もきれい:
+
+```json
+{
+  "env": { "FABLE_HARNESS_VERIFY_CMD": "npm run typecheck && npm test -- --bail" }
+}
+```
+
+編集があったターンの Stop 時にコマンドを実行し(bash 版は `sh -c`、PowerShell 版は `Invoke-Expression`、いずれもプロジェクトルートから。同梱 settings のタイムアウトは 300 秒)、失敗の間は完了をブロックして出力の末尾 1500 文字をモデルへ返す。ハーネス自身の最大の限界「儀式であって真実ではない」を Gate B について機械的に塞ぐ — マーカーは偽装できるが、落ちる typecheck は偽装できない。
+
+**キルスイッチ。** `FABLE_HARNESS_DISABLE` で settings.json を編集せずにフックを黙らせられる — `stop` / `accept` / `session` / `verify` / `all` のカンマ区切り(例: `FABLE_HARNESS_DISABLE=accept,verify`)。
 
 ## 導入手順
 
@@ -73,7 +89,7 @@ else cp "$storage/settings.hooks.json" "$proj/.claude/settings.json"; fi
 cat "$storage/HARNESS.template.md" >> "$proj/CLAUDE.md"
 ```
 
-その後: **セッションを再起動**し(フック登録は起動時に読み込まれる)、`/hooks` で 3 本が一覧に出ることを確認する。動作確認: 適当なファイルを 1 箇所編集し、完了報告なしでターンを終えてみる — 停止が 1 回だけ弾かれてゲート実行の指示が返ってくれば正常。
+その後: **セッションを再起動**し(フック登録は起動時に読み込まれる)、`/hooks` でハーネスの 4 本が一覧に出ることを確認する(`stop-verify` は `FABLE_HARNESS_VERIFY_CMD` を設定するまで何もしない)。動作確認: 適当なファイルを 1 箇所編集し、完了報告なしでターンを終えてみる — 停止が 1 回だけ弾かれてゲート実行の指示が返ってくれば正常。
 
 ## 設計メモ
 
@@ -89,6 +105,8 @@ cat "$storage/HARNESS.template.md" >> "$proj/CLAUDE.md"
 - マーカーは assistant エントリ内のどこにあってもカウントされる — モデルがマーカーを*引用*しただけ(extended thinking 内も含む)でもチェックは満たされてしまう。
 - `stop_hook_active` は現行の hooks ドキュメントに記載がない。実効的なループ保護は自前の「2 回でやめる」制限。
 - hooks は settings の全レベルでマージされる(ユーザー + プロジェクト両方が走る)。登録変更にはセッション再起動が必要。
+- strict verify は任意のコマンドをシェル権限で実行する — `FABLE_HARNESS_VERIFY_CMD` はビルドスクリプトと同じ扱いで、有効化前に中身を確認すること。PowerShell 版は `Invoke-Expression` 経由なので、素朴なネイティブコマンドを推奨。
+- 2 本の Stop フックは独立に走る。両方がブロックした場合は両方のメッセージが届き、順序は保証されない。
 
 ## 育て方
 
