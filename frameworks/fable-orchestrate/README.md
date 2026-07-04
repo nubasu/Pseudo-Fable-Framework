@@ -107,5 +107,5 @@ The aim is leverage: reinvest the tokens not spent on implementation into specci
 
 ## Known limits
 
-- Text-based discipline is strong steering, not enforcement (same as fable-lift). If acceptance needs mechanical enforcement, there's room for a subagent-completion hook that warns when accept-work wasn't run.
+- Text-based discipline is strong steering, not enforcement (same as fable-lift). Mechanical reinforcement of acceptance (a PostToolUse nudge after every subagent return) is available in the optional `frameworks/fable-harness/` module.
 - Parallel fan-out costs real money. Just honoring the routing table's "under ~15 minutes: do it yourself" removes most of the waste.

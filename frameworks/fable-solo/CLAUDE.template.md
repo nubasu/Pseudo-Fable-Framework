@@ -3,7 +3,7 @@
 <!-- fable-solo v1.1 (2026-07-04) — self-contained single-file edition for a SOLO
      v1.1: added §P5 test protocol (parity with fable-lift v1.1).
      Opus-class session doing everything itself: no worker team, no skills directory.
-     The fable-lift protocols are inlined (§P1–P4) so nothing depends on skill
+     The fable-lift protocols are inlined (§P1–P5) so nothing depends on skill
      invocation, and the file is tuned for the residual Opus→Fable gap: premature
      convergence, sophistication bias, verification depth, long-horizon drift, taste.
      Resident cost ≈ 3K tokens; for a lighter resident core + on-demand skills use

@@ -94,5 +94,5 @@ cp -R "$storage/.claude/skills/"* "$proj/.claude/skills/"
 
 ## 既知の限界と将来拡張
 
-- テキストによる規律は強制力ではなく強い誘導。機械的強制が必要なら、settings.json の hooks(例: Stop フックで finish-gate 未実施を警告)を追加する余地がある(OS 依存性が出るため本体には含めていない)。
+- テキストによる規律は強制力ではなく強い誘導。機械的強制(例: finish-gate 未実施の完了を Stop フックでブロック)はオプションの `frameworks/fable-harness/` として実装済み — フックスクリプトに OS 依存性が出るため本体とは分離してある。
 - コンパクション後の遵守率は低下しうる。長期タスクでは long-task-state のステートファイルが実質的な保険になる。

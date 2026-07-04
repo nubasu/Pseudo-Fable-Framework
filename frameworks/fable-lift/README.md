@@ -94,5 +94,5 @@ Model-facing files (core & skills) are in English for token efficiency and instr
 
 ## Known limits and future extensions
 
-- Text-based discipline is strong steering, not enforcement. If you need mechanical enforcement, there's room to add settings.json hooks (e.g., a Stop hook that warns when finish-gate wasn't run) — not included in the core because it introduces OS dependence.
+- Text-based discipline is strong steering, not enforcement. Mechanical enforcement (e.g., a Stop hook that blocks completion when finish-gate wasn't run) is available as the optional `frameworks/fable-harness/` module — kept separate because hook scripts introduce OS dependence.
 - Compliance can degrade after compaction. On long tasks, the long-task-state file is the practical insurance.

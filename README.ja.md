@@ -15,6 +15,7 @@
 | `fable-team` | PL+ワーカー混成チームの蒸留1枚版(ロール・ディスパッチ内蔵) | AGENTS.md 1枚 |
 | `fable-retro` | 継続運用: セッション跨ぎの復元(session-bootstrap)+ルール育成(retro) | CLAUDE.md 追記 + skills 2種 |
 | `fable-incident` | 障害対応: 止血優先の実況プロトコル(incident-response)+ blameless ポストモーテム(postmortem) | CLAUDE.md 追記 + skills 2種 |
+| `fable-harness` | hooks による機械的ガードレール: finish-gate 停止ブロック・accept-work ナッジ・state 自動注入 | フックスクリプト(.sh/.ps1)+ settings hooks ブロック + CLAUDE.md 追記 |
 
 ## まず構成を選ぶ
 
@@ -28,6 +29,7 @@
 | まず1枚だけで試す(混成チーム) | fable-team | 約1.5K |
 | + 継続運用(セッション復元・ルール育成。全構成に追加可) | + fable-retro | +約0.3K |
 | + 障害対応(本番を運用するなら。全構成に追加可) | + fable-incident | +約0.5K |
+| + 機械的ガードレール(hooks。全構成に追加可) | + fable-harness | +約0.25K |
 
 **排他ルール(重複導入しない):**
 
@@ -168,6 +170,29 @@ cp -R "$storage/fable-incident/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 - 本番影響が出た瞬間の実況プロトコル(止血→診断の順序厳守・証拠保全・タイムライン)と、解決後の blameless ポストモーテム。診断は lift の root-cause-debug、教訓の配置は retro に接続する(未導入でも単体で動く)。
+
+### H. 強制ハーネスを足す(hooks。全シナリオに追加可)
+
+```powershell
+New-Item -ItemType Directory -Force "$proj\.claude\hooks" | Out-Null
+Copy-Item -Force "$storage\fable-harness\.claude\hooks\*" "$proj\.claude\hooks\"
+if (Test-Path "$proj\.claude\settings.json") { Write-Host "settings.json あり - hooks ブロックを手動でマージしてください" }
+else { Copy-Item "$storage\fable-harness\settings.hooks.json" "$proj\.claude\settings.json" }
+Get-Content "$storage\fable-harness\HARNESS.template.md" -Encoding utf8 |
+  Add-Content "$proj\CLAUDE.md" -Encoding utf8
+```
+
+```bash
+# macOS / Linux
+mkdir -p "$proj/.claude/hooks"
+cp "$storage/fable-harness/.claude/hooks/"* "$proj/.claude/hooks/"
+if [ -f "$proj/.claude/settings.json" ]; then echo "settings.json あり - hooks ブロックを手動でマージしてください"
+else cp "$storage/fable-harness/settings.hooks.json" "$proj/.claude/settings.json"; fi
+cat "$storage/fable-harness/HARNESS.template.md" >> "$proj/CLAUDE.md"
+```
+
+- 3 本のフックがテキスト規律を機械的ガードレールに変える: finish-gate マーカーなしの「done」を弾く Stop フック、サブエージェントが戻るたびの検収ナッジ、セッション開始時の `.claude/state/` 自動注入。導入後はセッションを再起動し、`/hooks` で登録を確認する。
+- Windows では Git Bash があれば既定(bash)設定のままで正しい。無い環境のみ `settings.hooks.powershell.json` を使う。詳細と正直な限界は fable-harness の README を参照。
 
 ## 共通仕上げ(全シナリオ)
 

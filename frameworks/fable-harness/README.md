@@ -1,0 +1,96 @@
+# fable-harness
+
+English | [日本語](README.ja.md)
+
+The enforcement module — every fable framework README admits the same limit: "text discipline is strong steering, not enforcement". This module adds the missing mechanical layer: three Claude Code hooks guarding the three places where steering leaks the most. Adds to any framework configuration. Resident cost ~0.25K tokens (the CLAUDE.md addendum); the hook scripts themselves live outside the context window.
+
+## The idea — from steering to guardrails
+
+Three failure modes survive even a well-steered session, because each strikes exactly where attention is weakest — the finish line, the integration point, the restart:
+
+1. **"Done" without the gate** — the session edits files, then reports completion without running finish-gate. → The **Stop hook** blocks the stop until a finish-gate marker follows the last edit.
+2. **Integrating on the subagent's word** — accept-work exists, but nothing fires it. → The **PostToolUse hook** injects an acceptance nudge after every subagent return.
+3. **Resuming from memory** — the state file exists, but the new session never reads it. → The **SessionStart hook** injects `.claude/state/` into context before the first token of work.
+
+### Honest label
+
+- **What it enforces: the ritual.** A gate marker must follow edits; a nudge follows every subagent; state is always in context. "Forgot" stops being possible.
+- **What it cannot enforce: the truth.** A model can print `[finish-gate: pass]` without honestly running the gates — the hook cannot tell. The value is converting silent omission into active lying, which the non-negotiables (and the CLAUDE.md addendum) prohibit in writing.
+- **Fail-open by design.** Any internal error in a hook lets the session proceed; the harness must never break work.
+
+## Structure
+
+```
+fable-harness/
+├── HARNESS.template.md              ← CLAUDE.md addendum (~0.25K): the marker contract
+├── settings.hooks.json              ← hooks block, bash commands (default for ALL OSes — see Installation)
+├── settings.hooks.powershell.json   ← alternative for Windows WITHOUT Git Bash
+└── .claude/hooks/                   ← hook scripts (each as .sh + .ps1 twin; ASCII-only; zero dependencies)
+    ├── stop-finish-gate.(sh|ps1)        ← Stop: block "done" that has no finish-gate marker
+    ├── posttool-accept-work.(sh|ps1)    ← PostToolUse (Task|Agent): acceptance nudge
+    └── sessionstart-bootstrap.(sh|ps1)  ← SessionStart: inject .claude/state/ into context
+```
+
+## The three hooks
+
+| Hook | Fires on | Behavior | Enforces |
+|---|---|---|---|
+| `stop-finish-gate` | Stop (end of turn) | If the session modified files (Write/Edit/MultiEdit/NotebookEdit) and no `[finish-gate: pass]` / `[finish-gate: n/a]` marker follows the last edit → exit 2 blocks the stop and feeds the gate instruction back to the model | lift `finish-gate` / solo §P3 |
+| `posttool-accept-work` | PostToolUse, matcher `Task\|Agent` | Injects a one-line acceptance nudge after each subagent result (non-blocking) | orchestrate `accept-work` |
+| `sessionstart-bootstrap` | SessionStart (startup / resume / clear / compact) | If `.claude/state/` has files: lists them and inlines the newest one (60 lines / 4KB cap) into context; silent when empty | retro `session-bootstrap` OPEN / lift `long-task-state` |
+
+Loop safety on the Stop hook: it honors `stop_hook_active` when present, and independently stops insisting once it has already blocked twice since the last edit — worst case is two nudges, never an infinite loop.
+
+## Installation
+
+On Windows, Claude Code runs hook commands under **Git Bash when available** (PowerShell otherwise) — so the default bash setup below is correct for macOS, Linux, **and** most Windows machines. Reach for `settings.hooks.powershell.json` only where Git Bash is unavailable.
+
+```powershell
+$storage = "C:\path\to\Fable-Agent-Framework\frameworks\fable-harness"   # ← adjust to where you put this repo
+$proj    = "C:\path\to\project"
+
+# 1. Copy the hook scripts
+New-Item -ItemType Directory -Force "$proj\.claude\hooks" | Out-Null
+Copy-Item -Force "$storage\.claude\hooks\*" "$proj\.claude\hooks\"
+
+# 2. Register the hooks (no settings.json yet -> copy; otherwise merge the "hooks" block by hand)
+if (Test-Path "$proj\.claude\settings.json") { Write-Host "settings.json exists - merge the hooks block manually" }
+else { Copy-Item "$storage\settings.hooks.json" "$proj\.claude\settings.json" }
+
+# 3. Append the marker contract to CLAUDE.md
+Get-Content "$storage\HARNESS.template.md" -Encoding utf8 | Add-Content "$proj\CLAUDE.md" -Encoding utf8
+```
+
+```bash
+# macOS / Linux
+storage="/path/to/Fable-Agent-Framework/frameworks/fable-harness"   # ← adjust to where you put this repo
+proj="/path/to/project"
+
+mkdir -p "$proj/.claude/hooks"
+cp "$storage/.claude/hooks/"* "$proj/.claude/hooks/"
+if [ -f "$proj/.claude/settings.json" ]; then echo "settings.json exists - merge the hooks block manually"
+else cp "$storage/settings.hooks.json" "$proj/.claude/settings.json"; fi
+cat "$storage/HARNESS.template.md" >> "$proj/CLAUDE.md"
+```
+
+Afterwards: **restart the session** (hook registration loads at startup) and run `/hooks` to confirm the three hooks are listed. Smoke test: make a trivial file edit and let the turn end without a completion report — the stop should bounce exactly once with the gate instruction.
+
+## Design notes
+
+- **Transcript detection is heuristic.** The Stop hook substring-matches the session transcript (JSONL): non-sidechain assistant entries for file-tool uses and for the markers. The transcript schema is not officially documented; the patterns match the format observed in current Claude Code, and the hook fails open if the format ever shifts.
+- **The `.ps1` files are ASCII-only, deliberately.** Windows PowerShell 5.1 reads BOM-less scripts as ANSI, so any non-ASCII character would mojibake on non-English Windows. Keep them ASCII when editing.
+- **Marker contract**: `[finish-gate: pass]` after the gate passes; `[finish-gate: n/a]` plus a one-line reason for stops that are not completion claims. Defined in HARNESS.template.md and repeated inside the block message, so the Stop hook still works even without the addendum installed.
+
+## Honest limits
+
+- **Ritual, not truth** — a false marker passes the hook (see the label above); honesty stays a written non-negotiable, not a mechanical one.
+- File changes made through shell commands (the Bash tool: `sed`, `git apply`, generated scripts) are not detected as edits — the gate only sees the file tools. If your sessions routinely edit via shell, extend the pattern at the cost of noise.
+- The acceptance nudge fires for every subagent, including read-only scouts — the message tells the model to wave those through, but it is still one line per return. Delete the PostToolUse block from settings if it grates.
+- The marker counts anywhere in an assistant entry — a model *quoting* it (including inside extended thinking) satisfies the check without a real report.
+- `stop_hook_active` is absent from the current hooks documentation; the built-in two-block limit is the load-bearing loop protection.
+- Hooks merge across settings levels (user + project both run), and registration changes need a session restart.
+
+## Growing it
+
+- Family rule: grow from recurred failures, prune what never fires. If edits keep slipping past the gate via shell commands, add Bash detection; if the accept-work nudge never changes behavior, delete that block.
+- The block/nudge messages live inside the scripts — tune their wording the way you tune CLAUDE.md rules, and keep the `.sh` / `.ps1` twins in step.

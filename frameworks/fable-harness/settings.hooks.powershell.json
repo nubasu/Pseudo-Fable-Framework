@@ -1,0 +1,41 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\stop-finish-gate.ps1\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Task|Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\posttool-accept-work.ps1\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\sessionstart-bootstrap.ps1\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

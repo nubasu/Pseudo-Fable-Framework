@@ -15,6 +15,7 @@ Recipes for installing the fable family — a set of context frameworks for agen
 | `fable-team` | Distilled single file for a mixed PL + worker team (built-in role dispatch) | Single AGENTS.md |
 | `fable-retro` | Ongoing operations: cross-session restore (session-bootstrap) + rule cultivation (retro) | CLAUDE.md append + 2 skills |
 | `fable-incident` | Incident response: mitigate-first live protocol (incident-response) + blameless postmortem (postmortem) | CLAUDE.md append + 2 skills |
+| `fable-harness` | Mechanical guardrails via hooks: finish-gate stop-block, accept-work nudge, state auto-injection | hook scripts (.sh/.ps1) + settings hooks block + CLAUDE.md append |
 
 ## Pick a configuration first
 
@@ -28,6 +29,7 @@ Recipes for installing the fable family — a set of context frameworks for agen
 | Try a single file first (mixed team) | fable-team | ~1.5K |
 | + ongoing operations (session restore & rule cultivation; add to any setup) | + fable-retro | +~0.3K |
 | + incident response (if you operate production; add to any setup) | + fable-incident | +~0.5K |
+| + mechanical guardrails (hooks; add to any setup) | + fable-harness | +~0.25K |
 
 **Exclusivity rules (no duplicate installs):**
 
@@ -168,6 +170,29 @@ cp -R "$storage/fable-incident/.claude/skills/"* "$proj/.claude/skills/"
 ```
 
 - A live protocol for the moment production impact appears (strict mitigate-before-diagnose ordering, evidence preservation, timeline) and a blameless postmortem after resolution. Diagnosis plugs into lift's root-cause-debug and lesson placement into retro (works standalone without them).
+
+### H. Add the enforcement harness (hooks; compatible with every scenario)
+
+```powershell
+New-Item -ItemType Directory -Force "$proj\.claude\hooks" | Out-Null
+Copy-Item -Force "$storage\fable-harness\.claude\hooks\*" "$proj\.claude\hooks\"
+if (Test-Path "$proj\.claude\settings.json") { Write-Host "settings.json exists - merge the hooks block manually" }
+else { Copy-Item "$storage\fable-harness\settings.hooks.json" "$proj\.claude\settings.json" }
+Get-Content "$storage\fable-harness\HARNESS.template.md" -Encoding utf8 |
+  Add-Content "$proj\CLAUDE.md" -Encoding utf8
+```
+
+```bash
+# macOS / Linux
+mkdir -p "$proj/.claude/hooks"
+cp "$storage/fable-harness/.claude/hooks/"* "$proj/.claude/hooks/"
+if [ -f "$proj/.claude/settings.json" ]; then echo "settings.json exists - merge the hooks block manually"
+else cp "$storage/fable-harness/settings.hooks.json" "$proj/.claude/settings.json"; fi
+cat "$storage/fable-harness/HARNESS.template.md" >> "$proj/CLAUDE.md"
+```
+
+- Three hooks turn the family's text discipline into mechanical guardrails: a Stop hook that blocks "done" without a finish-gate marker, an acceptance nudge after every subagent return, and automatic `.claude/state/` injection at session start. Restart the session, then verify with `/hooks`.
+- On Windows the default (bash) settings are correct whenever Git Bash is installed; use `settings.hooks.powershell.json` otherwise. Details and honest limits: the fable-harness README.
 
 ## Common finishing steps (all scenarios)
 
