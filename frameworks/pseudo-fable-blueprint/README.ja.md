@@ -1,6 +1,6 @@
 # pseudo-fable-blueprint
 
-[English](README.md) | 日本語
+[English](README.md) | 日本語 · 導入後の日常運用: [HOWTOUSE.ja.md](HOWTOUSE.ja.md)
 
 与えられた仕様に対して、Opus 4.8 が Fable 5 級に設計・planning・ticket 化・その他必要な上流作業をこなすためのコンテキストフレームワーク。
 

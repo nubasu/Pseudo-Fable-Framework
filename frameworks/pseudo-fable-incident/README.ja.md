@@ -1,6 +1,6 @@
 # pseudo-fable-incident
 
-[English](README.md) | 日本語
+[English](README.md) | 日本語 · 導入後の日常運用: [HOWTOUSE.ja.md](HOWTOUSE.ja.md)
 
 障害対応モジュール — 本番影響が出た瞬間の実況プロトコル(**incident-response**)と、解決後の blameless ポストモーテム(**postmortem**)。どのフレームワーク構成にも追加できる。常駐コストは約0.5K トークン。
 

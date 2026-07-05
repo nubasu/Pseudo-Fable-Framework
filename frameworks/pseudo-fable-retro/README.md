@@ -1,6 +1,6 @@
 # pseudo-fable-retro
 
-English | [日本語](README.ja.md)
+English | [日本語](README.ja.md) · Day-to-day usage after installation: [HOWTOUSE.md](HOWTOUSE.md)
 
 The ongoing-operations module — two skills, a **learning rhythm (retro)** and a **session rhythm (session-bootstrap)**, plugging the two big leaks of long-running operation. Adds to any framework configuration and works standalone. Resident cost ~0.3K tokens.
 

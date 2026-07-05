@@ -1,6 +1,6 @@
 # pseudo-fable-blueprint
 
-English | [日本語](README.ja.md)
+English | [日本語](README.ja.md) · Day-to-day usage after installation: [HOWTOUSE.md](HOWTOUSE.md)
 
 A context framework that gets Opus 4.8 doing Fable 5-grade design, planning, ticketing, and whatever other upstream work a given spec requires.
 

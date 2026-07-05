@@ -1,6 +1,6 @@
 # pseudo-fable-orchestrate
 
-[English](README.md) | 日本語
+[English](README.md) | 日本語 · 導入後の日常運用: [HOWTOUSE.ja.md](HOWTOUSE.ja.md)
 
 Opus 4.8 をリード役として、サブエージェント(Sonnet 5 / Codex 等)への指示出し・検収を Fable 5 級に引き上げるコンテキストフレームワーク。
 

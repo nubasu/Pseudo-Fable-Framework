@@ -1,6 +1,6 @@
 # pseudo-fable-harness
 
-[English](README.md) | 日本語
+[English](README.md) | 日本語 · 導入後の日常運用: [HOWTOUSE.ja.md](HOWTOUSE.ja.md)
 
 強制モジュール — pseudo-fable の各 README は共通して「テキスト規律は強制力ではなく強い誘導」という限界を認めてきた。本モジュールはその欠けていた機械層を足す: 誘導が最も漏れやすい箇所を守る常時稼働の Claude Code hooks 3 本+ゴール直前にプロジェクトの実チェックを回すオプトインの **strict-verify** フック。どのフレームワーク構成にも追加できる。常駐コストは約 0.25K トークン(CLAUDE.md 追記分)で、フックスクリプト自体はコンテキスト外で動く。
 

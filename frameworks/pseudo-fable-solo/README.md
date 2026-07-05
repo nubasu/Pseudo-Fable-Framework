@@ -1,6 +1,6 @@
 # pseudo-fable-solo
 
-English | [日本語](README.ja.md)
+English | [日本語](README.ja.md) · Day-to-day usage after installation: [HOWTOUSE.md](HOWTOUSE.md)
 
 A **single-file** context framework that lifts a **solo Opus 4.8 session** to Fable 5-grade work. No team, no skills directory. Just place `CLAUDE.template.md` in the project root as `CLAUDE.md` and it works.
 

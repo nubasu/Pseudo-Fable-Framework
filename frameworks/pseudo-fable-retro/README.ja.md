@@ -1,6 +1,6 @@
 # pseudo-fable-retro
 
-[English](README.md) | 日本語
+[English](README.md) | 日本語 · 導入後の日常運用: [HOWTOUSE.ja.md](HOWTOUSE.ja.md)
 
 継続運用モジュール — **学習のリズム(retro)** と **セッションのリズム(session-bootstrap)** の skills 2種で、長期運用の2大漏れを塞ぐ。どのフレームワーク構成にも追加でき、単体でも動く。常駐コストは約0.3K トークン。
 

@@ -1,6 +1,6 @@
 # pseudo-fable-team
 
-English | [日本語](README.ja.md)
+English | [日本語](README.ja.md) · Day-to-day usage after installation: [HOWTOUSE.md](HOWTOUSE.md)
 
 A "team constitution" template that runs a mixed team — Opus 4.8 (PL role) + Sonnet 5 / Codex (worker role) — at Fable 5-grade discipline off **a single AGENTS.md**.
 

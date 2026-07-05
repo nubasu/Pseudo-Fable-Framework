@@ -1,6 +1,6 @@
 # pseudo-fable-lift
 
-English | [日本語](README.ja.md)
+English | [日本語](README.ja.md) · Day-to-day usage after installation: [HOWTOUSE.md](HOWTOUSE.md)
 
 A context framework that lifts Opus 4.8 / Sonnet 5 toward Fable 5-grade *ways of working*.
 

@@ -1,6 +1,6 @@
 # pseudo-fable-lift
 
-[English](README.md) | 日本語
+[English](README.md) | 日本語 · 導入後の日常運用: [HOWTOUSE.ja.md](HOWTOUSE.ja.md)
 
 Opus 4.8 / Sonnet 5 を、Fable 5 級の「仕事のやり方」に引き上げるコンテキストフレームワーク。
 

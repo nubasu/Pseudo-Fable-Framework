@@ -1,6 +1,6 @@
 # pseudo-fable-team
 
-[English](README.md) | 日本語
+[English](README.md) | 日本語 · 導入後の日常運用: [HOWTOUSE.ja.md](HOWTOUSE.ja.md)
 
 Opus 4.8(PL役)+ Sonnet 5 / Codex(作業者役)の混成チームが、**1枚の AGENTS.md** で Fable 5 級の規律で回るための「チーム憲法」テンプレート。
 

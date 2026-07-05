@@ -1,6 +1,6 @@
 # pseudo-fable-harness
 
-English | [日本語](README.ja.md)
+English | [日本語](README.ja.md) · Day-to-day usage after installation: [HOWTOUSE.md](HOWTOUSE.md)
 
 The enforcement module — every pseudo-fable framework README admits the same limit: "text discipline is strong steering, not enforcement". This module adds the missing mechanical layer: three always-on Claude Code hooks guarding the places where steering leaks the most, plus an opt-in **strict-verify** hook that runs your project's real checks at the finish line. Adds to any framework configuration. Resident cost ~0.25K tokens (the CLAUDE.md addendum); the hook scripts themselves live outside the context window.
 

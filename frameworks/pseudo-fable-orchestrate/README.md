@@ -1,6 +1,6 @@
 # pseudo-fable-orchestrate
 
-English | [日本語](README.ja.md)
+English | [日本語](README.ja.md) · Day-to-day usage after installation: [HOWTOUSE.md](HOWTOUSE.md)
 
 A context framework that lifts Opus 4.8 as the lead: briefing and accepting work from subagents (Sonnet 5 / Codex, etc.) at Fable 5 grade.
 

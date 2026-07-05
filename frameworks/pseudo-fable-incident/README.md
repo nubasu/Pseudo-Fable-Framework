@@ -1,6 +1,6 @@
 # pseudo-fable-incident
 
-English | [日本語](README.ja.md)
+English | [日本語](README.ja.md) · Day-to-day usage after installation: [HOWTOUSE.md](HOWTOUSE.md)
 
 The incident-response module — a live protocol for the moment production impact appears (**incident-response**) and a blameless **postmortem** after resolution. Adds to any framework configuration. Resident cost ~0.5K tokens.
 

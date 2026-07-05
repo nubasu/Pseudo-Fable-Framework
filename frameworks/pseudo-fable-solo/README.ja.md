@@ -1,6 +1,6 @@
 # pseudo-fable-solo
 
-[English](README.md) | 日本語
+[English](README.md) | 日本語 · 導入後の日常運用: [HOWTOUSE.ja.md](HOWTOUSE.ja.md)
 
 **単独の Opus 4.8 セッション**を Fable 5 級の仕事ぶりに引き上げる、**1ファイル完結**のコンテキストフレームワーク。チームなし・skills ディレクトリ不要。`CLAUDE.template.md` をプロジェクト直下に `CLAUDE.md` として置くだけで動く。
 

@@ -2,7 +2,7 @@
 
 English | [日本語](README.ja.md)
 
-Recipes for installing the pseudo-fable family — a set of context frameworks for agent work discipline — into a new project. For each framework's design rationale and details, see the README.md in its directory.
+Recipes for installing the pseudo-fable family — a set of context frameworks for agent work discipline — into a new project. For each framework's design rationale and details, see the README.md in its directory; for day-to-day usage after installation, see the HOWTOUSE.md next to it.
 
 ## Included frameworks
 
